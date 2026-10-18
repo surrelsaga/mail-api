@@ -19,8 +19,8 @@ export class ContactsController {
     }
 
     @Patch(':id') // PATCH /contacts/:id
-    update(@Param('id') id: string, @Body() contact: {}) {
-        return { id, ...contact };
+    update(@Param('id') id: string, @Body() contactUpdate: {}) {
+        return { id, ...contactUpdate };
     }
 
     @Delete(':id') // DELETE /contacts/:id
