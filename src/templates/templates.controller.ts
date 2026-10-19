@@ -1,5 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, ParseIntPipe } from '@nestjs/common';
 import { TemplatesService } from './templates.service.js';
+import { CreateTemplateDto } from './dto/create-template.dto.js';
+import { UpdateTemplateDto } from './dto/update-template.dto.js';
 
 @Controller('templates')
 export class TemplatesController {
@@ -16,13 +18,13 @@ export class TemplatesController {
     }
 
     @Post() // POST /templates
-    create(@Body() template: { name: string, subject: string, body: string }) {
-        return this.templatesService.create(template);
+    create(@Body() createTemplateDto: CreateTemplateDto) {
+        return this.templatesService.create(createTemplateDto);
     }
 
     @Patch(':id') // PATCH /templates/:id
-    update(@Param('id', ParseIntPipe) id: number, @Body() templateUpdate: { name?: string, subject?: string, body?: string }) {
-        return this.templatesService.update(id, templateUpdate);
+    update(@Param('id', ParseIntPipe) id: number, @Body() updateTemplateDto: UpdateTemplateDto) {
+        return this.templatesService.update(id, updateTemplateDto);
     }
 
     @Delete(':id') // DELETE /templates/:id
