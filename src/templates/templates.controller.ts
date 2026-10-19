@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, ParseIntPipe } from '@nestjs/common';
 import { TemplatesService } from './templates.service.js';
 
 @Controller('templates')
@@ -11,8 +11,8 @@ export class TemplatesController {
     }
 
     @Get(':id') // GET /templates/:id
-    findOne(@Param('id') id: string) {
-        return this.templatesService.findOne(+id);
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.templatesService.findOne(id);
     }
 
     @Post() // POST /templates
@@ -21,13 +21,13 @@ export class TemplatesController {
     }
 
     @Patch(':id') // PATCH /templates/:id
-    update(@Param('id') id: string, @Body() templateUpdate: { name?: string, subject?: string, body?: string }) {
-        return this.templatesService.update(+id, templateUpdate);
+    update(@Param('id', ParseIntPipe) id: number, @Body() templateUpdate: { name?: string, subject?: string, body?: string }) {
+        return this.templatesService.update(id, templateUpdate);
     }
 
     @Delete(':id') // DELETE /templates/:id
-    remove(@Param('id') id: string) {
-        return this.templatesService.remove(+id);
+    remove(@Param('id', ParseIntPipe) id: number) {
+        return this.templatesService.remove(id);
     }
 
 }

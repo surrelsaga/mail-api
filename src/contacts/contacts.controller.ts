@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, ParseIntPipe } from '@nestjs/common';
 import { ContactsService } from './contacts.service.js';
 
 @Controller('contacts')
@@ -11,8 +11,8 @@ export class ContactsController {
     }
 
     @Get(':id') //GET /contacts/:id
-    findOne(@Param('id') id: string) {
-        return this.contactsService.findOne(+id);
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.contactsService.findOne(id);
     }
 
     @Post() // POST /contacts
@@ -21,12 +21,12 @@ export class ContactsController {
     }
 
     @Patch(':id') // PATCH /contacts/:id
-    update(@Param('id') id: string, @Body() contactUpdate: { name?: string, email?: string }) {
-        return this.contactsService.update(+id, contactUpdate);
+    update(@Param('id', ParseIntPipe) id: number, @Body() contactUpdate: { name?: string, email?: string }) {
+        return this.contactsService.update(id, contactUpdate);
     }
 
     @Delete(':id') // DELETE /contacts/:id
-    remove(@Param('id') id: string) {
-        return this.contactsService.remove(+id);
+    remove(@Param('id', ParseIntPipe) id: number) {
+        return this.contactsService.remove(id);
     }
 }
