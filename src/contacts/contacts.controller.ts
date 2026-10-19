@@ -1,5 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, ParseIntPipe } from '@nestjs/common';
 import { ContactsService } from './contacts.service.js';
+import { CreateContactDto } from './dto/create-contact.dto.js';
+import { UpdateContactDto } from './dto/update-contact.dto.js';
 
 @Controller('contacts')
 export class ContactsController {
@@ -16,13 +18,13 @@ export class ContactsController {
     }
 
     @Post() // POST /contacts
-    create(@Body() contact: { name: string, email: string }) {
-        return this.contactsService.create(contact);
+    create(@Body() createContactDto: CreateContactDto) {
+        return this.contactsService.create(createContactDto);
     }
 
     @Patch(':id') // PATCH /contacts/:id
-    update(@Param('id', ParseIntPipe) id: number, @Body() contactUpdate: { name?: string, email?: string }) {
-        return this.contactsService.update(id, contactUpdate);
+    update(@Param('id', ParseIntPipe) id: number, @Body() updateContactDto: UpdateContactDto) {
+        return this.contactsService.update(id, updateContactDto);
     }
 
     @Delete(':id') // DELETE /contacts/:id
