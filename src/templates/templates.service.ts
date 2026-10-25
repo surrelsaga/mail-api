@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class TemplatesService {
@@ -45,6 +45,8 @@ export class TemplatesService {
         // find instead of filter because all template have unique ids, so there's always exactly 1 template with a specific id
         const template = this.templates.find(template => template.id === id);
 
+        if (!template) throw new NotFoundException(`Template ${id} not found`);
+
         return template;
     }
 
@@ -65,6 +67,8 @@ export class TemplatesService {
     }
 
     update(id: number, templateUpdate: { name?: string, subject?: string, body?: string }) {
+        this.findOne(id);
+
         this.templates = this.templates.map(template => {
             if (template.id === id) {
                 return { ...template, ...templateUpdate, updatedAt: new Date() }
@@ -78,11 +82,9 @@ export class TemplatesService {
     }
 
     remove(id: number) {
-        const removedTemplate = this.templates.find(template => template.id === id);
+        const removedTemplate = this.findOne(id);
 
-        if (removedTemplate) {
-            this.templates = this.templates.filter(template => template.id !== removedTemplate.id);
-        }
+        this.templates = this.templates.filter(template => template.id !== removedTemplate.id);
 
         return removedTemplate;
     }
