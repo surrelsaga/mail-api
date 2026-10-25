@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateContactDto } from './dto/create-contact.dto.js';
 import { UpdateContactDto } from './dto/update-contact.dto.js';
 
@@ -38,6 +38,9 @@ export class ContactsService {
     findOne(id: number) {
         const contact = this.contacts.find(contact => contact.id === id);
 
+        // handle not found case and return the corresponding status/message
+        if (!contact) throw new NotFoundException(`Contact ${id} not found`);
+
         return contact;
     }
 
@@ -65,6 +68,9 @@ export class ContactsService {
     }
 
     update(id: number, updateContactDto: UpdateContactDto) {
+        // check if id exists before checking for duplicates
+        this.findOne(id);
+
         // check for duplicates (exception: user updates with the exact same email, not count as duplicate)
         const isDuplicate = this.contacts.some(c => c.id !== id && c.email === updateContactDto.email);
         if (isDuplicate) throw new ConflictException('Email already exists');
@@ -83,9 +89,8 @@ export class ContactsService {
     remove(id: number) {
         const removedContact = this.findOne(id);
 
-        if (removedContact) {
-            this.contacts = this.contacts.filter(contact => contact.id !== removedContact.id);
-        }
+        // from here, contact confirm exists
+        this.contacts = this.contacts.filter(contact => contact.id !== removedContact.id);
 
         return removedContact;
     }
