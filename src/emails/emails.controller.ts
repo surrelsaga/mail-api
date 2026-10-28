@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { EmailsService } from './emails.service.js';
+import { CreateEmailDto } from './dto/create-email.dto.js'
 
 @Controller('emails')
 export class EmailsController {
@@ -14,12 +15,12 @@ export class EmailsController {
     */
 
     @Get()
-    findAll(@Query('status') status?: string, @Query('contactId') contactId?: string) {
-        return this.emailsService.findAll(status, contactId ? +contactId : undefined);
+    findAll(@Query('status') status?: string, @Query('contactId', ParseIntPipe) contactId?: number) {
+        return this.emailsService.findAll(status, contactId ? contactId : undefined);
     }
 
     @Post()
-    create(@Body() email: { templateId: number, contactId: number }) {
-        return this.emailsService.create(email);
+    create(@Body() createEmailDto: CreateEmailDto) {
+        return this.emailsService.create(createEmailDto);
     }
 }
