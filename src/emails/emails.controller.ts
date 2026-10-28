@@ -1,7 +1,9 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { EmailsService } from './emails.service.js';
 
 @Controller('emails')
 export class EmailsController {
+    constructor(private readonly emailsService: EmailsService) {}
     // the routes
     /*
      GET /emails
@@ -13,14 +15,11 @@ export class EmailsController {
 
     @Get()
     findAll(@Query('status') status?: string, @Query('contactId') contactId?: string) {
-        if (status && contactId) return `emails with status ${status} and contactId ${contactId}`;
-        if (status) return `emails with status ${status}`;
-        if (contactId) return `emails with status ${contactId}`;
-        return 'all emails';
+        return this.emailsService.findAll(status, contactId ? +contactId : undefined);
     }
 
     @Post()
     create(@Body() email: { templateId: number, contactId: number }) {
-        return `post an email ${email}`;
+        return this.emailsService.create(email);
     }
 }

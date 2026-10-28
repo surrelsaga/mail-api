@@ -21,7 +21,7 @@ export class EmailsService {
         private readonly contactsService: ContactsService,
     ) {}
 
-    private emails = [
+    private emails: Email[] = [
         {
             id: 1,
             templateId: 1,
@@ -78,8 +78,8 @@ export class EmailsService {
         const template = this.templatesService.findOne(email.templateId);
         const contact = this.contactsService.findOne(email.contactId);
 
-        const newEmail = {
-            id: this.nextId + 1,
+        const newEmail: Email = {
+            id: this.nextId,
             templateId: template.id,
             contactId: contact.id,
             subject: template.subject.replaceAll("{{name}}", contact.name),
@@ -88,6 +88,8 @@ export class EmailsService {
             error: null,
             createdAt: new Date(),
         };
+
+        this.nextId += 1;
 
         this.emails.push(newEmail);
 
