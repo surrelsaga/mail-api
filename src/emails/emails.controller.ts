@@ -1,4 +1,4 @@
-import { Body, Controller, Get, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { EmailsService } from './emails.service.js';
 import { CreateEmailDto } from './dto/create-email.dto.js'
 
@@ -15,8 +15,13 @@ export class EmailsController {
     */
 
     @Get()
-    findAll(@Query('status') status?: string, @Query('contactId', ParseIntPipe) contactId?: number) {
+    findAll(@Query('status') status?: string, @Query('contactId', new ParseIntPipe( { optional: true })) contactId?: number) {
         return this.emailsService.findAll(status, contactId ? contactId : undefined);
+    }
+
+    @Get(':id')
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.emailsService.findOne(id);
     }
 
     @Post()

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TemplatesService } from '../templates/templates.service.js';
 import { ContactsService } from '../contacts/contacts.service.js';
 
@@ -71,6 +71,14 @@ export class EmailsService {
         if (status) return this.emails.filter(email => email.status === status);
         if (contactId) return this.emails.filter(email => email.contactId === contactId);
         return this.emails;
+    }
+
+    findOne(id: number) {
+        const email = this.emails.find(email => email.id === id);
+
+        if (!email) throw new NotFoundException(`Email ${id} not found`);
+
+        return email;
     }
 
     create(email: { templateId: number, contactId: number }) {
