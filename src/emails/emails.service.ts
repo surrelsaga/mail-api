@@ -32,6 +32,7 @@ export class EmailsService implements OnModuleInit {
 
         this.transporter = nodemailer.createTransport({
             host: 'smtp.ethereal.email',
+            // host: 'smtp.nope.test', // faking an error host, causing sendEmail to fail
             port: 587,
             auth: { user: account.user, pass: account.pass },
         });
@@ -114,13 +115,19 @@ export class EmailsService implements OnModuleInit {
         };
 
         // fake send email to the Ethereal's SMTP server, "create emai" here means we send an email
-        const info = await this.transporter.sendMail({
-            from: '"Mail API" <no-reply@mail-api.test>',
-            to: contact.email,
-            subject: newEmail.subject,
-            text: newEmail.body,
-        })
-        console.log(nodemailer.getTestMessageUrl(info));
+        try {
+            const info = await this.transporter.sendMail({
+                from: '"Mail API" <no-reply@mail-api.test>',
+                to: contact.email,
+                subject: newEmail.subject,
+                text: newEmail.body,
+            })
+            console.log(nodemailer.getTestMessageUrl(info));
+        } catch (err) {
+            newEmail.status = 'failed';
+            newEmail.error = err instanceof Error ? err.message : String(err);
+            console.error(err);
+        }
 
         this.nextId += 1;
 
