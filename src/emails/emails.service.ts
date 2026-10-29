@@ -1,4 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import * as nodemailer from 'nodemailer';
+import type { Transporter } from 'nodemailer';
 import { TemplatesService } from '../templates/templates.service.js';
 import { ContactsService } from '../contacts/contacts.service.js';
 
@@ -15,11 +17,25 @@ type Email = {
 };
 
 @Injectable()
-export class EmailsService {
+export class EmailsService implements OnModuleInit {
+    private transporter: Transporter;
+
     constructor(
         private readonly templatesService: TemplatesService,
         private readonly contactsService: ContactsService,
     ) {}
+
+    // this hook in nestjs will help just before the app starts, these async events will be initalized to get what we want
+    // account is async so cannot put under service constructor(), since it returns a Promise
+    async onModuleInit() {
+        const account = await nodemailer.createTestAccount();
+
+        this.transporter = nodemailer.createTransport({
+            host: 'smtp.ethereal.email',
+            port: 587,
+            auth: { user: account.user, pass: account.pass },
+        });
+    }
 
     private emails: Email[] = [
         {
@@ -81,7 +97,7 @@ export class EmailsService {
         return email;
     }
 
-    create(email: { templateId: number, contactId: number }) {
+    async create(email: { templateId: number, contactId: number }) {
         // verify that the template and the contact exist fisrt, if not return 404 not found by findOne()
         const template = this.templatesService.findOne(email.templateId);
         const contact = this.contactsService.findOne(email.contactId);
@@ -96,6 +112,15 @@ export class EmailsService {
             error: null,
             createdAt: new Date(),
         };
+
+        // fake send email to the Ethereal's SMTP server, "create emai" here means we send an email
+        const info = await this.transporter.sendMail({
+            from: '"Mail API" <no-reply@mail-api.test>',
+            to: contact.email,
+            subject: newEmail.subject,
+            text: newEmail.body,
+        })
+        console.log(nodemailer.getTestMessageUrl(info));
 
         this.nextId += 1;
 
