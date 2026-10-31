@@ -4,6 +4,6 @@ import { base } from './ormconfig.js';
 
 export const appDataSource = new DataSource({
   ...base,
-  entities: [Template],
+  entities: ["'src/**/*.entity.ts']"],
   migrations: ['src/database/migrations/*.ts'],
 });
