@@ -20,4 +20,7 @@ export class Template {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @Column({ type: "varchar", nullable: true })
+    description: string | null;
 }
