@@ -7,6 +7,7 @@ import { EmailsModule } from './emails/emails.module.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Template } from './templates/templates.entity.js';
+import { base } from './database/ormconfig.js';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { Template } from './templates/templates.entity.js';
     }),
 
     // Connect to the database async
-    TypeOrmModule.forRootAsync({
+    TypeOrmModule.forRoot(
       // these will be used forRoot, since these data we hardcode ourselves but cannot be commited, since git will leak the db pwd (credential)
       // type: 'postgres',
       // host: ...
@@ -29,15 +30,11 @@ import { Template } from './templates/templates.entity.js';
       // username: ...
       // password: ...
       // database: ...
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        url: config.get('DATABASE_URL'),
-        entities: [Template],
-        // autoLoadEntities: true,
-        synchronize: false,
-      })
-    }),
+      {
+        ...base,
+        autoLoadEntities: true,
+      },
+    ),
   ],
   controllers: [AppController],
   providers: [AppService],
