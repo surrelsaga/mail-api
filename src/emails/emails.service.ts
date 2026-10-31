@@ -100,7 +100,7 @@ export class EmailsService implements OnModuleInit {
 
     async create(email: { templateId: number, contactId: number }) {
         // verify that the template and the contact exist fisrt, if not return 404 not found by findOne()
-        const template = this.templatesService.findOne(email.templateId);
+        const template = await this.templatesService.findOne(email.templateId);
         const contact = this.contactsService.findOne(email.contactId);
 
         const newEmail: Email = {

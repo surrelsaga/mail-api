@@ -6,6 +6,7 @@ import { ContactsModule } from './contacts/contacts.module.js';
 import { EmailsModule } from './emails/emails.module.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Template } from './templates/templates.entity.js';
 
 @Module({
   imports: [
@@ -32,8 +33,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         url: config.get('DATABASE_URL'),
-        autoLoadEntities: true,
-        synchronize: true,
+        entities: [Template],
+        // autoLoadEntities: true,
+        synchronize: false,
       })
     }),
   ],
