@@ -11,10 +11,7 @@ export class Contact {
 
     @Column()
     email: string;
-
-    @Column()
-    body: string;
-
+    
     @CreateDateColumn()
     createdAt: Date;
 
