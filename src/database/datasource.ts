@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
-import { Template } from '../templates/templates.entity.js';
 import { base } from './ormconfig.js';
 
+// export this datasource is for the typeorm cli to see the datasource object
 export const appDataSource = new DataSource({
   ...base,
   entities: ["'src/**/*.entity.ts']"],
