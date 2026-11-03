@@ -13,8 +13,8 @@ export class TemplatesService {
         private templatesRepository: Repository<Template>
     ) {}
 
-    async findAll(): Promise<Template[]> {
-        return await this.templatesRepository.find();
+    findAll(): Promise<Template[]> {
+        return this.templatesRepository.find();
     }
 
     async findOne(id: number): Promise<Template> {
@@ -25,12 +25,10 @@ export class TemplatesService {
         return template;
     }
 
-    async create(createTemplateDto: CreateTemplateDto) {
+    create(createTemplateDto: CreateTemplateDto) {
         const newTemplate = this.templatesRepository.create(createTemplateDto);
 
-        await this.templatesRepository.save(newTemplate);
-
-        return newTemplate;
+        return this.templatesRepository.save(newTemplate);
     }
 
     async update(id: number, updateTemplateDto: UpdateTemplateDto) {
@@ -41,8 +39,8 @@ export class TemplatesService {
             updateTemplateDto,
         );
 
-        // only for me to see the output, main thing is the above
-        return await this.findOne(id);
+        // return the UPDATED version
+        return this.findOne(id);
     }
 
     async remove(id: number) {

@@ -76,8 +76,8 @@ export class EmailsService implements OnModuleInit {
 
     // private nextId = 5;
 
-    async findAll(status?: string, contactId?: number) {
-        if (status && contactId) return await this.emailsRepository.findBy({ status: status as 'sent' | 'failed', contactId });
+    findAll(status?: string, contactId?: number) {
+        if (status && contactId) return this.emailsRepository.findBy({ status: status as 'sent' | 'failed', contactId });
         if (status) return this.emailsRepository.findBy({ status: status as 'sent' | 'failed' });
         if (contactId) return this.emailsRepository.findBy({ contactId });
         return this.emailsRepository.find();
@@ -120,8 +120,6 @@ export class EmailsService implements OnModuleInit {
             console.error(err);
         }
 
-        this.emailsRepository.save(newEmail);
-
-        return newEmail;
+        return this.emailsRepository.save(newEmail);
     }
 }
