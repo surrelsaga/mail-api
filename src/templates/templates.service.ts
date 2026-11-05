@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Template } from './templates.entity.js';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { CreateTemplateDto } from './dto/create-template.dto.js';
 import { UpdateTemplateDto } from './dto/update-template.dto.js';
 
@@ -46,7 +46,15 @@ export class TemplatesService {
     async remove(id: number) {
         const removedTemplate = await this.findOne(id);
 
-        await this.templatesRepository.delete(id);
+        try {
+            await this.templatesRepository.delete(id);
+        } catch (err) {
+            if (err instanceof QueryFailedError && err.driverError.code === '23503') {
+                throw new ConflictException(`Template ${id} cannot be deleted because emails still use it`);
+            }
+
+            throw err;
+        }
 
         return removedTemplate;
     }

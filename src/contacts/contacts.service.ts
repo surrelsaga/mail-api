@@ -73,8 +73,16 @@ export class ContactsService {
     async remove(id: number) {
         const removedContact = await this.findOne(id);
 
-        // from here, contact confirm exists
-        await this.contactsRepository.delete(id);
+        try {
+            // from here, contact confirm exists
+            await this.contactsRepository.delete(id);
+        } catch (err) {
+            if (err instanceof QueryFailedError && err.driverError.code === '23503') {
+                throw new ConflictException(`Contact ${id} cannot be deleted because emails still use it`);
+            }
+
+            throw err; // anything else, just throw
+        }
 
         return removedContact;
     }
